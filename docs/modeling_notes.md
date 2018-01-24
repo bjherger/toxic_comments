@@ -18,5 +18,14 @@ Prioritized backlog
  - Histograms
  - Stats
  - Determine model architecture
+ 
+### Extract
+
+ - No notes
+ 
+### Transform
+
+ - pandas max, should use `axis=1` for max across multiple rows
+ - Some toxic types are incredibly rare. It might be worth always setting their probability to zero 
    
   

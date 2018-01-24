@@ -130,3 +130,6 @@ def archive_dataset_schemas(step_name, local_dict, global_dict):
 
     # Write to file
     agg_schema_df.to_csv(schema_output_path, index_label='variable')
+
+def toxic_vars():
+    return ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
