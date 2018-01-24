@@ -28,6 +28,7 @@ def main():
 def extract():
     logging.info('Begin extract')
 
+    train_observations =
     lib.archive_dataset_schemas('extract', locals(), globals())
     logging.info('End extract')
     pass
