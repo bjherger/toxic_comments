@@ -7,6 +7,8 @@ Code Template
 """
 import logging
 
+import pandas
+
 import lib
 
 
@@ -28,14 +30,22 @@ def main():
 def extract():
     logging.info('Begin extract')
 
-    train_observations =
+    # Read from file
+    train_observations = pandas.read_csv(lib.get_conf('train_path'))
+
     lib.archive_dataset_schemas('extract', locals(), globals())
     logging.info('End extract')
-    pass
+    return train_observations
 
 
 def transform():
     logging.info('Begin transform')
+
+    # TODO Create histogram metrics
+
+    # TODO Create histograms
+
+    # TODO Create data set level metrics
 
     lib.archive_dataset_schemas('transform', locals(), globals())
     logging.info('End transform')

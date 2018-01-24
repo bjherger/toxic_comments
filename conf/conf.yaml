@@ -1,1 +1,2 @@
 data_schema_dir: ../data/schemas
+train_path: ../data/input/train.csv
