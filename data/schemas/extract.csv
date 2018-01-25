@@ -1,1 +1,9 @@
-variable,variable,type,data_set
+variable,data_set,type,variable
+id,train_observations,object,
+comment_text,train_observations,object,
+toxic,train_observations,int64,
+severe_toxic,train_observations,int64,
+obscene,train_observations,int64,
+threat,train_observations,int64,
+insult,train_observations,int64,
+identity_hate,train_observations,int64,

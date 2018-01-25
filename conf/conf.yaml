@@ -1,1 +1,3 @@
 data_schema_dir: ../data/schemas
+train_path: ../data/input/train.csv
+histogram_path: ../data/output/histograms

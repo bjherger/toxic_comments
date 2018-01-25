@@ -7,6 +7,8 @@ import numpy
 import pandas
 import yaml
 
+import matplotlib.pyplot as plt
+
 # Global variables
 CONFS = None
 BATCH_NAME = None
@@ -130,3 +132,29 @@ def archive_dataset_schemas(step_name, local_dict, global_dict):
 
     # Write to file
     agg_schema_df.to_csv(schema_output_path, index_label='variable')
+
+def toxic_vars():
+    return ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
+
+def var_histogram(df, column):
+
+    x = df[column].values
+
+    x = [value for value in x if not numpy.math.isnan(value)]
+    histogram(x, column)
+
+
+
+def histogram(x, name):
+    # Stolen from https://matplotlib.org/1.2.1/examples/pylab_examples/histogram_demo.html
+
+    # Clear figure
+    plt.clf()
+    n, bins, patches = plt.hist(x, 50, normed=1, facecolor='green', alpha=0.75)
+
+    plt.xlabel(name)
+    plt.title(name)
+    # plt.axis([40, 160, 0, 0.03])
+    plt.grid(True)
+
+    plt.savefig(os.path.join(get_conf('histogram_path'), name))
