@@ -51,9 +51,11 @@ def transform(train_observations):
     train_observations['percent_unique_tokens'] = train_observations['tokens'].apply(
         lambda x: float(len(set(x)))) / train_observations['num_tokens']
 
-    print train_observations
-
-    # TODO Create histograms
+    # Create histograms
+    histogram_vars = ['num_chars', 'num_tokens', 'percent_unique_tokens']
+    for histogram_var in histogram_vars:
+        logging.info('Creating histogram for: {}'.format(histogram_var))
+        lib.var_histogram(train_observations, histogram_var)
 
     # Agg: Create data set level metrics
     # Agg: is_toxic
@@ -67,14 +69,13 @@ def transform(train_observations):
             toxic_type, sum(train_observations[toxic_type]), len(train_observations.index), sum(train_observations[toxic_type]) / float(len(train_observations.index)), toxic_type))
 
     # Agg: Vocab size
-    all_tokens = itertools.chain(train_observations['tokens'])
-    logging.info('Vocab size: {}'.format(len(set(all_tokens))))
+    all_tokens = [item for sublist in train_observations['tokens'] for item in sublist]
+    logging.info('Raw vocab size: {}'.format(len(set(all_tokens))))
 
     # Agg word count distribution
     token_counts = collections.Counter(all_tokens).values()
-
-
-
+    token_counts = filter(lambda x: x > 1000, token_counts)
+    lib.histogram(token_counts, 'token_counts, count > 1000')
 
     lib.archive_dataset_schemas('transform', locals(), globals())
     logging.info('End transform')

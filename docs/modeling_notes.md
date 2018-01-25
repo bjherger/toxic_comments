@@ -27,5 +27,11 @@ Prioritized backlog
 
  - pandas max, should use `axis=1` for max across multiple rows
  - Some toxic types are incredibly rare. It might be worth always setting their probability to zero 
-   
+
+## 2018-01-24
+
+### Transform
+
+ - Writing histogram helper method
+ - Creating histograms
   
