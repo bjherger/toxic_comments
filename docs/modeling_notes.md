@@ -42,7 +42,10 @@ Prioritized backlog
 TODO
 
  - Implement metric
+ - Implement baseline model
+ - Implement callbacks
  - Implement submission formatter
+ 
  - Rename repo
  - Copy over character model from spoilers
  - Train first pass at model
@@ -54,4 +57,11 @@ Metric
  - Should be able to use [categorical cross-entropy](https://keras.io/losses/#categorical_crossentropy), and report 
  back `accuracy`
  
- 
+Baseline model
+
+ - Stupid, minimal model
+
+Callbacks
+
+ - Borrowing from [spoilers](https://github.com/bjherger/spoilers_model/blob/master/bin/main.py)
+ - 
