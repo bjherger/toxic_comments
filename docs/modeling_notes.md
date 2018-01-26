@@ -34,4 +34,3 @@ Prioritized backlog
 
  - Writing histogram helper method
  - Creating histograms
-  

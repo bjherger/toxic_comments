@@ -5,7 +5,7 @@ Project Description
 ## Getting started
 
 ### Repo structure
-Where important things are. 
+
 
 ### Python Environment
 Python code in this repo utilizes packages that are not part of the common library. To make sure you have all of the 
