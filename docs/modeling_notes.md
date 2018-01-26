@@ -34,3 +34,24 @@ Prioritized backlog
 
  - Writing histogram helper method
  - Creating histograms
+ 
+## 2018-01-26
+
+### Character model
+
+TODO
+
+ - Implement metric
+ - Implement submission formatter
+ - Rename repo
+ - Copy over character model from spoilers
+ - Train first pass at model
+
+Metric
+
+ - Keras wants [column wise log-loss](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge#evaluation)
+ - log-loss is the default accuracy metric w/ binary models , according to this [so](https://stackoverflow.com/a/37156047)
+ - Should be able to use [categorical cross-entropy](https://keras.io/losses/#categorical_crossentropy), and report 
+ back `accuracy`
+ 
+ 
