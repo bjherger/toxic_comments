@@ -118,12 +118,13 @@ def model(train_observations, X, y):
 def load(train_observations, X, y, cat_model):
     logging.info('Begin load')
 
-    # Save observations
-    train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
-    train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
+    # Save observations, if object heavy histogram data set wasn't generated
+    if not lib.get_conf('create_histograms'):
+        train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
+        train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
 
     # Save final model
-    cat_model.save(lib.get_conf('model_path'))
+    cat_model.save(os.path.join(lib.get_conf('model_path'), 'model.h5py'))
 
     lib.archive_dataset_schemas('load', locals(), globals())
     logging.info('End load')
