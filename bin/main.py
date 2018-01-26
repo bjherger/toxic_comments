@@ -30,8 +30,8 @@ def main():
 
     train_observations = extract()
     train_observations, X, y = transform(train_observations)
-    model(train_observations, X, y)
-    load()
+    train_observations, X, y, cat_model = model(train_observations, X, y)
+    load(train_observations, X, y, cat_model)
     pass
 
 
@@ -115,8 +115,15 @@ def model(train_observations, X, y):
     return train_observations, X, y, cat_model
 
 
-def load():
+def load(train_observations, X, y, cat_model):
     logging.info('Begin load')
+
+    # Save observations
+    train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
+    train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
+
+    # Save final model
+    cat_model.save(lib.get_conf('model_path'))
 
     lib.archive_dataset_schemas('load', locals(), globals())
     logging.info('End load')
