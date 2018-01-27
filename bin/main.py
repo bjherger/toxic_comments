@@ -86,7 +86,7 @@ def transform(observations, gen_y):
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
     # TODO Replace mockup X with actual values
-    X = numpy.random.normal(size=(len(observations.index), 3))
+    X = numpy.zeros(shape=(len(observations.index), 3))
     if gen_y:
         y = observations[lib.toxic_vars()].values
         logging.info('Created X with shape: {} and Y with shape: {}'.format(X.shape, y.shape))

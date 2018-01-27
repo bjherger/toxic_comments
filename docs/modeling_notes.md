@@ -64,4 +64,21 @@ Baseline model
 Callbacks
 
  - Borrowing from [spoilers](https://github.com/bjherger/spoilers_model/blob/master/bin/main.py)
- - 
+ - They seem to work
+ 
+Refactor
+
+ - Refactoring into train / infer steps
+ - Updating load code
+ 
+
+ 
+## 2018-01-27
+
+Submission
+
+ - Formatting output for submission
+ - Testing stupid model submission
+ - Reviewing [unofficial kaggle cli](https://github.com/floydwch/kaggle-cli)
+ - Submitting baseline gaussian random input data set
+ - Submitting baseline zeros input data set
