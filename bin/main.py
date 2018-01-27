@@ -29,9 +29,9 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
 
     train_observations, test_observations = extract()
-    train_observations, train_X, train_y, cat_model = train(train_observations)
-    test_observations, test_X, test_preds = infer(test_observations, cat_model)
-    load(train_observations, train_X, train_y, cat_model)
+    train_observations, cat_model = train(train_observations)
+    test_observations = infer(test_observations, cat_model)
+    load(train_observations, cat_model, test_observations)
     pass
 
 
@@ -120,7 +120,7 @@ def train(train_observations):
 
     lib.archive_dataset_schemas('train', locals(), globals())
     logging.info('End train')
-    return train_observations, train_X, train_y, cat_model
+    return train_observations, cat_model
 
 
 def infer(test_observations, cat_model):
@@ -136,7 +136,7 @@ def infer(test_observations, cat_model):
 
     lib.archive_dataset_schemas('infer', locals(), globals())
     logging.info('End infer')
-    return test_observations, test_X, test_preds
+    return test_observations
 
 def load(train_observations, X, y, cat_model):
     logging.info('Begin load')
