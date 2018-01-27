@@ -1,4 +1,6 @@
 variable,data_set,type,variable
+id,test_observations,object,
+comment_text,test_observations,object,
 id,train_observations,object,
 comment_text,train_observations,object,
 toxic,train_observations,int64,

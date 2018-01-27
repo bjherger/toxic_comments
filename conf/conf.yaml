@@ -1,5 +1,6 @@
 data_schema_dir: ../data/schemas
 train_path: ../data/input/train.csv
+test_path: ../data/input/test.csv
 create_histograms: False
 histogram_path: ../data/output/histograms
 model_checkpoint_path: ../data/output/model_checkpoints
