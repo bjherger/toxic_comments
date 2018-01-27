@@ -95,7 +95,7 @@ def transform(observations, gen_y):
 
 
 
-    lib.archive_dataset_schemas('transform', locals(), globals())
+    lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')
     return observations, X, y
 
@@ -118,16 +118,24 @@ def train(train_observations):
 
     cat_model.fit(train_X, train_y, validation_split=.2, epochs=2, callbacks=callbacks)
 
-
-    lib.archive_dataset_schemas('model', locals(), globals())
-    logging.info('End model')
+    lib.archive_dataset_schemas('train', locals(), globals())
+    logging.info('End train')
     return train_observations, train_X, train_y, cat_model
 
 
 def infer(test_observations, cat_model):
+    logging.info('Begin infer')
     test_observations, test_X, test_y = transform(test_observations, gen_y=False)
-
     test_preds = cat_model.predict(test_X)
+
+    column_names = map(lambda x: x+'_pred', lib.toxic_vars())
+    preds_df = pandas.DataFrame(test_preds, columns=column_names)
+    preds_df['id'] = test_observations['id']
+
+    test_observations = pandas.merge(left=test_observations, right=preds_df, on='id')
+
+    lib.archive_dataset_schemas('infer', locals(), globals())
+    logging.info('End infer')
     return test_observations, test_X, test_preds
 
 def load(train_observations, X, y, cat_model):
