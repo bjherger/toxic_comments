@@ -14,6 +14,7 @@ import itertools
 
 import numpy
 import pandas
+import re
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import lib
@@ -138,13 +139,33 @@ def infer(test_observations, cat_model):
     logging.info('End infer')
     return test_observations
 
-def load(train_observations, X, y, cat_model):
+def load(train_observations, cat_model, test_observations):
     logging.info('Begin load')
 
-    # Save observations, if object heavy histogram data set wasn't generated
+
     if not lib.get_conf('create_histograms'):
+        # Save train observations, if object heavy histogram data set wasn't generated
+        logging.info('Saving train observations')
         train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
         train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
+
+        # Save test observations, if object heavy histogram data set wasn't generated
+        logging.info('Saving test observations')
+        test_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'test_observations.feather'))
+        test_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'test_observations.csv'), index=False)
+
+    # Save submission
+    logging.info('Saving submission')
+    submission_columns = pandas.read_csv(lib.get_conf('sample_submission_path')).columns
+    submissions = test_observations.copy()
+    submissions.columns = map(lambda x: re.sub(r'_pred', '', x), submissions.columns)
+    submissions = submissions[submission_columns]
+    logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
+    submissions.to_csv(
+        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
+        index=False)
+
+
 
     # Save final model
     cat_model.save(os.path.join(lib.get_conf('model_path'), 'model.h5py'))
