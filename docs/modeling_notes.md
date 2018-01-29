@@ -82,3 +82,12 @@ Submission
  - Reviewing [unofficial kaggle cli](https://github.com/floydwch/kaggle-cli)
  - Submitting baseline gaussian random input data set
  - Submitting baseline zeros input data set
+ 
+ ## 2018-01-28
+ 
+Response Var
+
+ - Setting up response var as separate Ys
+ - Setting up mutliple y arrays in transform
+ - Setting up multiple output layers
+ - Intalling TF and h5py (not in environment)

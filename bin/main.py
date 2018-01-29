@@ -88,23 +88,26 @@ def transform(observations, gen_y):
     # TODO Replace mockup X with actual values
     X = numpy.zeros(shape=(len(observations.index), 3))
     if gen_y:
-        y = observations[lib.toxic_vars()].values
-        logging.info('Created X with shape: {} and Y with shape: {}'.format(X.shape, y.shape))
+        ys = list()
+        for toxic_var in lib.toxic_vars():
+            local_y = observations[toxic_var].values
+            ys.append(local_y)
+        logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
     else:
-        y = None
+        ys = None
         logging.info('Created X with shape: {} and None Y'.format(X.shape))
 
 
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')
-    return observations, X, y
+    return observations, X, ys
 
 
 def train(train_observations):
     logging.info('Begin train')
 
-    train_observations, train_X, train_y = transform(train_observations, gen_y=True)
+    train_observations, train_X, train_ys = transform(train_observations, gen_y=True)
 
     # Set up callbacks
     tf_log_path = os.path.join(os.path.expanduser('~/log_dir'), lib.get_batch_name())
@@ -115,9 +118,9 @@ def train(train_observations):
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
                  ModelCheckpoint(mc_log_path)]
-    cat_model = models.baseline_model(train_X, train_y)
+    cat_model = models.baseline_model(train_X, train_ys)
 
-    cat_model.fit(train_X, train_y, validation_split=.2, epochs=2, callbacks=callbacks)
+    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=2, callbacks=callbacks)
 
     lib.archive_dataset_schemas('train', locals(), globals())
     logging.info('End train')
@@ -126,7 +129,7 @@ def train(train_observations):
 
 def infer(test_observations, cat_model):
     logging.info('Begin infer')
-    test_observations, test_X, test_y = transform(test_observations, gen_y=False)
+    test_observations, test_X, test_ys = transform(test_observations, gen_y=False)
     test_preds = cat_model.predict(test_X)
 
     column_names = map(lambda x: x+'_pred', lib.toxic_vars())
