@@ -1,6 +1,7 @@
 variable,data_set,type,variable
 id,test_observations,object,
 comment_text,test_observations,object,
+index,test_observations,int64,
 toxic_pred,test_observations,float32,
 severe_toxic_pred,test_observations,float32,
 obscene_pred,test_observations,float32,

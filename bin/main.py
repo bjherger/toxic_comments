@@ -46,7 +46,9 @@ def extract():
     if lib.get_conf('test_run'):
         logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
         train_observations = train_observations.sample(1000)
+        train_observations = train_observations.reset_index()
         test_observations = test_observations.sample(1000)
+        test_observations = test_observations.reset_index()
 
     lib.archive_dataset_schemas('extract', locals(), globals())
     logging.info('End extract')
@@ -146,6 +148,7 @@ def infer(test_observations, cat_model):
         preds_df[column_name] = test_preds[index]
 
     preds_df['id'] = test_observations['id']
+    preds_df = preds_df.reset_index()
 
     test_observations = pandas.merge(left=test_observations, right=preds_df, on='id')
 
