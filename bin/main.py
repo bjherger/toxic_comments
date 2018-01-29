@@ -43,6 +43,11 @@ def extract():
     train_observations = pandas.read_csv(lib.get_conf('train_path'))
     test_observations = pandas.read_csv(lib.get_conf('test_path'))
 
+    if lib.get_conf('test_run'):
+        logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
+        train_observations = train_observations.sample(1000)
+        test_observations = test_observations.sample(1000)
+
     lib.archive_dataset_schemas('extract', locals(), globals())
     logging.info('End extract')
     return train_observations, test_observations
@@ -132,8 +137,14 @@ def infer(test_observations, cat_model):
     test_observations, test_X, test_ys = transform(test_observations, gen_y=False)
     test_preds = cat_model.predict(test_X)
 
+    # Each probability is wrapped in its own array. This produces a flat array of probabilities
+    test_preds = map(lambda x: x[:, 0], test_preds)
+
     column_names = map(lambda x: x+'_pred', lib.toxic_vars())
-    preds_df = pandas.DataFrame(test_preds, columns=column_names)
+    preds_df = pandas.DataFrame(index=range(len(test_preds[0])))
+    for index, column_name in enumerate(column_names):
+        preds_df[column_name] = test_preds[index]
+
     preds_df['id'] = test_observations['id']
 
     test_observations = pandas.merge(left=test_observations, right=preds_df, on='id')
