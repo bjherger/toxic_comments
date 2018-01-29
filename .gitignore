@@ -1,3 +1,6 @@
+# Model checkpoints
+data/output/model_checkpoints
+
 # Compiled python code
 ~.pyc
 *.pyc

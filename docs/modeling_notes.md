@@ -42,7 +42,10 @@ Prioritized backlog
 TODO
 
  - Implement metric
+ - Implement baseline model
+ - Implement callbacks
  - Implement submission formatter
+ 
  - Rename repo
  - Copy over character model from spoilers
  - Train first pass at model
@@ -54,4 +57,37 @@ Metric
  - Should be able to use [categorical cross-entropy](https://keras.io/losses/#categorical_crossentropy), and report 
  back `accuracy`
  
+Baseline model
+
+ - Stupid, minimal model
+
+Callbacks
+
+ - Borrowing from [spoilers](https://github.com/bjherger/spoilers_model/blob/master/bin/main.py)
+ - They seem to work
  
+Refactor
+
+ - Refactoring into train / infer steps
+ - Updating load code
+ 
+
+ 
+## 2018-01-27
+
+Submission
+
+ - Formatting output for submission
+ - Testing stupid model submission
+ - Reviewing [unofficial kaggle cli](https://github.com/floydwch/kaggle-cli)
+ - Submitting baseline gaussian random input data set
+ - Submitting baseline zeros input data set
+ 
+ ## 2018-01-28
+ 
+Response Var
+
+ - Setting up response var as separate Ys
+ - Setting up mutliple y arrays in transform
+ - Setting up multiple output layers
+ - Intalling TF and h5py (not in environment)
