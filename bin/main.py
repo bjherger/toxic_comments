@@ -116,7 +116,7 @@ def train(train_observations):
                  ModelCheckpoint(mc_log_path)]
     cat_model = models.bi_lstm_embedding(train_X, train_ys)
 
-    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=2, callbacks=callbacks)
+    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=lib.get_conf('num_epochs'), callbacks=callbacks)
 
     lib.archive_dataset_schemas('train', locals(), globals())
     logging.info('End train')

@@ -6,6 +6,7 @@ sample_submission_path: ../data/input/sample_submission.csv
 create_histograms: False
 histogram_path: ../data/output/histograms
 x_maxlen: 1000
+num_epochs: 1
 model_checkpoint_path: ../data/output/model_checkpoints
 load_path: ../data/output/enriched_datasets
 model_path: ../data/output/models
