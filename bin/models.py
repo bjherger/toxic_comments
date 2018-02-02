@@ -10,5 +10,5 @@ def baseline_model(X, y):
     preds = Dense(units=y.shape[1], activation='sigmoid')(x)
     regression_model = Model(model_input, preds)
     regression_model.compile(loss=losses.categorical_crossentropy,
-                             optimizer='adam', metrics=['acc'])
+                             optimizer='adam', metrics=['acc', 'loss'])
     return regression_model

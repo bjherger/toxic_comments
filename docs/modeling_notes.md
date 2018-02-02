@@ -82,3 +82,9 @@ Submission
  - Reviewing [unofficial kaggle cli](https://github.com/floydwch/kaggle-cli)
  - Submitting baseline gaussian random input data set
  - Submitting baseline zeros input data set
+ - Validation loss is much lower than submission loss
+ 
+Metric
+
+ - Loss should be consistent w/ columnwise log loss. Looking into it a bit more.
+ 
