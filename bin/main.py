@@ -27,7 +27,7 @@ def main():
     :return: None
     :rtype: None
     """
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     train_observations, test_observations = extract()
     train_observations, cat_model = train(train_observations)
