@@ -75,7 +75,9 @@ def get_batch_name():
 
     if BATCH_NAME is None:
         logging.info('Batch name not yet set. Setting batch name.')
-        BATCH_NAME = str(datetime.datetime.utcnow()).replace(' ', '_').replace('/', '_').replace(':', '_')
+        batch_prefix = get_conf('batch_prefix')
+        BATCH_NAME = batch_prefix + '_' + str(datetime.datetime.utcnow()).replace(' ', '_').replace('/', '_').replace(
+            ':', '_')
         logging.info('Batch name: {}'.format(BATCH_NAME))
     return BATCH_NAME
 
