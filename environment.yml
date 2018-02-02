@@ -1,16 +1,26 @@
 name: toxic
 channels:
-- defaults
+- !!python/unicode
+  'defaults'
 dependencies:
-- openssl
-- pip=8.1.2=py27_0
-- python=2.7.12=1
-- readline=6.2=2
-- setuptools=26.1.1=py27_0
-- sqlite=3.13.0=0
-- tk=8.5.18=0
-- wheel=0.29.0=py27_0
-- zlib=1.2.8=3
+- !!python/unicode
+  'openssl=1.0.2l=0'
+- !!python/unicode
+  'pip=8.1.2=py27_0'
+- !!python/unicode
+  'python=2.7.12=1'
+- !!python/unicode
+  'readline=6.2=2'
+- !!python/unicode
+  'setuptools=26.1.1=py27_0'
+- !!python/unicode
+  'sqlite=3.13.0=0'
+- !!python/unicode
+  'tk=8.5.18=0'
+- !!python/unicode
+  'wheel=0.29.0=py27_0'
+- !!python/unicode
+  'zlib=1.2.8=3'
 - pip:
   - absl-py==0.1.9
   - backports.functools-lru-cache==1.4
@@ -54,7 +64,8 @@ dependencies:
   - sklearn==0.0
   - smart-open==1.5.6
   - subprocess32==3.2.7
-  - tensorflow==1.5.0
+  - tensorflow-gpu==1.1.0
   - tensorflow-tensorboard==1.5.0
   - urllib3==1.22
   - werkzeug==0.14.1
+prefix: !!python/unicode '/Users/bjherger/anaconda2/envs/toxic'
