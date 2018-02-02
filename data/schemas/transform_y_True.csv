@@ -1,4 +1,5 @@
 variable,data_set,type,variable
+index,observations,int64,
 id,observations,object,
 comment_text,observations,object,
 toxic,observations,int64,

@@ -93,10 +93,7 @@ def transform(observations, gen_y):
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
     # TODO Replace mockup X with actual values
-    lib.gen_x_y(observations['comment_text'], )
-
-
-
+    X, ys = lib.gen_x_y(observations, 'comment_text', gen_y)
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')

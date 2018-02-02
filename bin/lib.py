@@ -17,6 +17,9 @@ from keras.preprocessing.sequence import pad_sequences
 CONFS = None
 BATCH_NAME = None
 TEMP_DIR = None
+CHAR_INDICES = None
+INDICES_CHAR = None
+LEGAL_CHARS = None
 
 
 def load_confs(confs_path='../conf/conf.yaml'):
@@ -217,18 +220,18 @@ def gen_x_y(observations, x_column, gen_y=False):
         logging.debug('Cleaned text indices: {}'.format(text_indices))
         cleaned_text_indices.append(text_indices)
 
+    X = pad_sequences(cleaned_text_indices, maxlen=get_conf('x_maxlen'), value=max(indices_char.keys()) + 1)
+
     # Prepare Ys
     if gen_y is True:
         ys = list()
         for toxic_var in toxic_vars():
             local_y = observations[toxic_var].values
+            local_y = numpy.array(local_y, dtype=bool)
             ys.append(local_y)
         logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
     else:
         ys = None
         logging.info('Created X with shape: {} and None Y'.format(X.shape))
 
-    # Convert all sequences into X and Y matrices
-    X = pad_sequences(cleaned_text_indices, maxlen=get_conf('x_maxlen'), value=max(indices_char.keys()) + 1)
-    ys = numpy.array(ys, dtype=bool)
     return X, ys

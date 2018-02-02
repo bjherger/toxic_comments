@@ -1,10 +1,11 @@
 data_schema_dir: ../data/schemas
-test_run: False
+test_run: True
 train_path: ../data/input/train.csv
 test_path: ../data/input/test.csv
 sample_submission_path: ../data/input/sample_submission.csv
 create_histograms: False
 histogram_path: ../data/output/histograms
+x_maxlen: 1000
 model_checkpoint_path: ../data/output/model_checkpoints
 load_path: ../data/output/enriched_datasets
 model_path: ../data/output/models
