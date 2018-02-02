@@ -93,16 +93,8 @@ def transform(observations, gen_y):
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
     # TODO Replace mockup X with actual values
-    X = numpy.zeros(shape=(len(observations.index), 3))
-    if gen_y:
-        ys = list()
-        for toxic_var in lib.toxic_vars():
-            local_y = observations[toxic_var].values
-            ys.append(local_y)
-        logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
-    else:
-        ys = None
-        logging.info('Created X with shape: {} and None Y'.format(X.shape))
+    lib.gen_x_y(observations['comment_text'], )
+
 
 
 

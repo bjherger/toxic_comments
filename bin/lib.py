@@ -1,15 +1,19 @@
 import datetime
 import logging
 import os
+import string
 import tempfile
 
 import numpy
 import pandas
+import re
 import yaml
 
 import matplotlib.pyplot as plt
 
 # Global variables
+from keras.preprocessing.sequence import pad_sequences
+
 CONFS = None
 BATCH_NAME = None
 TEMP_DIR = None
@@ -158,3 +162,73 @@ def histogram(x, name):
     plt.grid(True)
 
     plt.savefig(os.path.join(get_conf('histogram_path'), name))
+
+def legal_characters():
+    global LEGAL_CHARS
+    if LEGAL_CHARS is None:
+        chars = set(string.printable + '<>')
+        chars.remove('\n')
+        chars.remove('\r')
+        LEGAL_CHARS = chars
+    return LEGAL_CHARS
+
+def get_char_indices():
+    global CHAR_INDICES
+    if CHAR_INDICES is None:
+        chars = sorted(list(set(legal_characters())))
+        CHAR_INDICES = dict((c, i) for i, c in enumerate(chars))
+    return CHAR_INDICES
+
+def get_indices_char():
+    global INDICES_CHAR
+    if INDICES_CHAR is None:
+        chars = sorted(list(set(legal_characters())))
+        INDICES_CHAR = dict((i, c) for i, c in enumerate(chars))
+    return INDICES_CHAR
+
+def gen_x_y(observations, x_column, gen_y=False):
+    logging.info('Generating X and Y')
+
+    # Reference vars
+    char_indices = get_char_indices()
+    indices_char = get_indices_char()
+    cleaned_text_chars = list()
+    cleaned_text_indices = list()
+
+    # Prepare x
+    for text in observations[x_column]:
+        logging.debug('Raw text: {}'.format(text))
+
+        text = map(lambda x: x.lower(), text)
+        text = map(lambda x: x if x in legal_characters() else ' ', text)
+        text = ''.join(text)
+        text = re.sub(r'\s+', ' ', text)
+        text = text.strip()
+
+        # Add start and end characters
+        text = re.sub('<', ' ', text)
+        text = re.sub('>', ' ', text)
+        text = '<' + text + '>'
+
+        logging.debug('Cleaned text: {}'.format(text))
+        cleaned_text_chars.append(text)
+
+        text_indices = map(lambda x: char_indices[x], text)
+        logging.debug('Cleaned text indices: {}'.format(text_indices))
+        cleaned_text_indices.append(text_indices)
+
+    # Prepare Ys
+    if gen_y is True:
+        ys = list()
+        for toxic_var in toxic_vars():
+            local_y = observations[toxic_var].values
+            ys.append(local_y)
+        logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
+    else:
+        ys = None
+        logging.info('Created X with shape: {} and None Y'.format(X.shape))
+
+    # Convert all sequences into X and Y matrices
+    X = pad_sequences(cleaned_text_indices, maxlen=get_conf('x_maxlen'), value=max(indices_char.keys()) + 1)
+    ys = numpy.array(ys, dtype=bool)
+    return X, ys
