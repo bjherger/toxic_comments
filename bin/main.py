@@ -114,7 +114,7 @@ def train(train_observations):
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
                  ModelCheckpoint(mc_log_path)]
-    cat_model = models.baseline_model(train_X, train_ys)
+    cat_model = models.bi_lstm_embedding(train_X, train_ys)
 
     cat_model.fit(train_X, train_ys, validation_split=.2, epochs=2, callbacks=callbacks)
 
@@ -168,7 +168,7 @@ def load(train_observations, cat_model, test_observations):
     submissions = submissions[submission_columns]
     logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
     submissions.to_csv(
-        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
+        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'simple_char_model.csv'),
         index=False)
 
 
