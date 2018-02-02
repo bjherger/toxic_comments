@@ -2,7 +2,6 @@ name: toxic
 channels:
 - defaults
 dependencies:
-- ca-certificates=2017.08.26=ha1e5d58_0
 - openssl
 - pip=8.1.2=py27_0
 - python=2.7.12=1
