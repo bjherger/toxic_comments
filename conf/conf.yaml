@@ -1,4 +1,5 @@
 data_schema_dir: ../data/schemas
+test_run: False
 train_path: ../data/input/train.csv
 test_path: ../data/input/test.csv
 sample_submission_path: ../data/input/sample_submission.csv

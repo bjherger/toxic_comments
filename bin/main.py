@@ -43,6 +43,13 @@ def extract():
     train_observations = pandas.read_csv(lib.get_conf('train_path'))
     test_observations = pandas.read_csv(lib.get_conf('test_path'))
 
+    if lib.get_conf('test_run'):
+        logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
+        train_observations = train_observations.sample(1000)
+        train_observations = train_observations.reset_index()
+        test_observations = test_observations.sample(1000)
+        test_observations = test_observations.reset_index()
+
     lib.archive_dataset_schemas('extract', locals(), globals())
     logging.info('End extract')
     return train_observations, test_observations
@@ -88,23 +95,26 @@ def transform(observations, gen_y):
     # TODO Replace mockup X with actual values
     X = numpy.zeros(shape=(len(observations.index), 3))
     if gen_y:
-        y = observations[lib.toxic_vars()].values
-        logging.info('Created X with shape: {} and Y with shape: {}'.format(X.shape, y.shape))
+        ys = list()
+        for toxic_var in lib.toxic_vars():
+            local_y = observations[toxic_var].values
+            ys.append(local_y)
+        logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
     else:
-        y = None
+        ys = None
         logging.info('Created X with shape: {} and None Y'.format(X.shape))
 
 
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')
-    return observations, X, y
+    return observations, X, ys
 
 
 def train(train_observations):
     logging.info('Begin train')
 
-    train_observations, train_X, train_y = transform(train_observations, gen_y=True)
+    train_observations, train_X, train_ys = transform(train_observations, gen_y=True)
 
     # Set up callbacks
     tf_log_path = os.path.join(os.path.expanduser('~/log_dir'), lib.get_batch_name())
@@ -115,9 +125,9 @@ def train(train_observations):
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
                  ModelCheckpoint(mc_log_path)]
-    cat_model = models.baseline_model(train_X, train_y)
+    cat_model = models.baseline_model(train_X, train_ys)
 
-    cat_model.fit(train_X, train_y, validation_split=.2, epochs=2, callbacks=callbacks)
+    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=2, callbacks=callbacks)
 
     lib.archive_dataset_schemas('train', locals(), globals())
     logging.info('End train')
@@ -126,12 +136,19 @@ def train(train_observations):
 
 def infer(test_observations, cat_model):
     logging.info('Begin infer')
-    test_observations, test_X, test_y = transform(test_observations, gen_y=False)
+    test_observations, test_X, test_ys = transform(test_observations, gen_y=False)
     test_preds = cat_model.predict(test_X)
 
+    # Each probability is wrapped in its own array. This produces a flat array of probabilities
+    test_preds = map(lambda x: x[:, 0], test_preds)
+
     column_names = map(lambda x: x+'_pred', lib.toxic_vars())
-    preds_df = pandas.DataFrame(test_preds, columns=column_names)
+    preds_df = pandas.DataFrame(index=range(len(test_preds[0])))
+    for index, column_name in enumerate(column_names):
+        preds_df[column_name] = test_preds[index]
+
     preds_df['id'] = test_observations['id']
+    preds_df = preds_df.reset_index()
 
     test_observations = pandas.merge(left=test_observations, right=preds_df, on='id')
 
