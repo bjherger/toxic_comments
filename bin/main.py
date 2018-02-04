@@ -168,7 +168,7 @@ def load(train_observations, cat_model, test_observations):
     submissions = submissions[submission_columns]
     logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
     submissions.to_csv(
-        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'simple_char_model.csv'),
+        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
         index=False)
 
 
