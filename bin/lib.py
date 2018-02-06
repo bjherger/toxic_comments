@@ -193,7 +193,7 @@ def get_indices_char():
     return INDICES_CHAR
 
 
-def gen_x_y(observations, x_column, gen_y=False):
+def gen_character_model_x_y(observations, x_column, gen_y=False):
     logging.info('Generating X and Y')
 
     # Reference vars

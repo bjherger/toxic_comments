@@ -26,9 +26,16 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
 
+    # Load all resources and data from file
     train_observations, test_observations = extract()
+
+    # Train a model
     train_observations, cat_model = train(train_observations)
+
+    # Use model for inference
     test_observations = infer(test_observations, cat_model)
+
+    # Load all results to file
     load(train_observations, cat_model, test_observations)
     pass
 
@@ -91,7 +98,7 @@ def transform(observations, gen_y):
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
     # Generate X and y values
-    X, ys = lib.gen_x_y(observations, 'comment_text', gen_y)
+    X, ys = lib.gen_character_model_x_y(observations, 'comment_text', gen_y)
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')

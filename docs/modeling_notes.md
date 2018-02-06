@@ -145,6 +145,27 @@ Prioritized backlog:
    - Continue training serialized model
    - Model run summary
  - Add AUC metric
+ 
+Project wide code style refactor
+
+ - Pycharm auto-refactor
+ - Pycharm inspect code
+ - There are a few places w/ capitalized variables (`X`), and other misc issues that I choose to leave in
+
+### De-couple logic
+
+TODO
+
+ - Create model conf parameter
+ - Create model singleton
+ - Modify load to create and fill a batch file
+ - More consistent logging
+ - Do something else w/ EDA code
+ - Add flag for training model
+ - Add flag for inference
+ 
+
+
 
  
  
