@@ -6,15 +6,14 @@ Code Template
 
 """
 import collections
+import itertools
 import logging
+import os
+import re
 
 import gensim
-import os
-import itertools
-
 import numpy
 import pandas
-import re
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import lib
@@ -170,8 +169,6 @@ def load(train_observations, cat_model, test_observations):
     submissions.to_csv(
         path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
         index=False)
-
-
 
     # Save final model
     cat_model.save(os.path.join(lib.get_conf('model_path'), 'model.h5py'))

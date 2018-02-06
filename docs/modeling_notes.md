@@ -100,3 +100,51 @@ Response Var
  - Setting up multiple output layers
  - Intalling TF and h5py (not in environment)
 
+
+## 2018-02-06
+
+Bince ast update:
+
+ - Set up train / infer pipeline
+ - Set up biLSTM model
+ - Trained a few simple models
+ 
+Refactor. A few goals:
+
+ - Put all run output in a single folder (easier archiving)
+ - README
+ - Easier inference from serialized model
+ - Continue training serialized model
+ - Easier ability to switch to different data sets
+ - Easier to follow logic around X and Y transformation
+ - De-couple logic for character level mode from this particular data set
+ - Specify model in conf (?)
+ - Create model architecture in conf (?)
+ - Docstrings
+ - Model run summary
+ - Add AUC metric
+ 
+Better models. A few ideas:
+
+ - Convolutional layer (reduce train time)
+ - Vary learning rate
+ - Vary embedding size 
+ - Dense layer after bi-lstm
+ 
+Prioritized backlog:
+
+ - Project wide code style refactor
+ - De-couple logic for character level mode from this particular data set
+   - Easier to follow logic around X and Y transformation
+   - Put all run output in a single folder (easier archiving)
+   - Docstrings
+ - README
+ - Model integration
+   - Specify model in conf (?)
+   - Easier inference from serialized model
+   - Continue training serialized model
+   - Model run summary
+ - Add AUC metric
+
+ 
+ 
