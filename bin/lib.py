@@ -18,6 +18,8 @@ import models
 # Global variables
 CONFS = None
 BATCH_NAME = None
+BATCH_OUTPUT_FOLDER = None
+MODEL_CHECKPOINT_PATH = None
 TEMP_DIR = None
 CHAR_INDICES = None
 INDICES_CHAR = None
@@ -79,10 +81,29 @@ def get_batch_name():
     if BATCH_NAME is None:
         logging.info('Batch name not yet set. Setting batch name.')
         batch_prefix = get_conf('batch_prefix')
-        BATCH_NAME = batch_prefix + '_' + str(datetime.datetime.utcnow()).replace(' ', '_').replace('/', '_').replace(
-            ':', '_')
+        model_choice = get_conf('model_choice')
+        datetime_str = str(datetime.datetime.utcnow().isoformat())
+        BATCH_NAME = '_'.join([batch_prefix, model_choice, datetime_str])
         logging.info('Batch name: {}'.format(BATCH_NAME))
     return BATCH_NAME
+
+def get_batch_output_folder():
+    global BATCH_OUTPUT_FOLDER
+    if BATCH_OUTPUT_FOLDER is None:
+        BATCH_OUTPUT_FOLDER = os.path.join(get_conf('load_path'), get_batch_name())
+        os.mkdir(BATCH_OUTPUT_FOLDER)
+        logging.info('Batch output folder: {}'.format(BATCH_OUTPUT_FOLDER))
+    return BATCH_OUTPUT_FOLDER
+
+def get_model_checkpoint_path():
+    global MODEL_CHECKPOINT_PATH
+    if MODEL_CHECKPOINT_PATH is None:
+        MODEL_CHECKPOINT_PATH = os.path.join(get_batch_output_folder(), 'model_checkpoints')
+        os.mkdir(MODEL_CHECKPOINT_PATH)
+        logging.info('Model checkpoint path: {}'.format(MODEL_CHECKPOINT_PATH))
+    return MODEL_CHECKPOINT_PATH
+
+
 
 
 def get_model(X=None, y=None):
@@ -101,7 +122,7 @@ def get_model(X=None, y=None):
         elif model_choice_string in models.__dict__:
             if X is None or y is None:
                 raise ValueError('Configurations request a new model, but X and y not provided. These are necessary'
-                                 'for shape purposes. ')
+                                 'for shape purposes.')
 
             CURRENT_BATCH_MODEL = models.__dict__[model_choice_string](X,y)
 

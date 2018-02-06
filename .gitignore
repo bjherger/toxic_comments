@@ -1,5 +1,5 @@
-# Model checkpoints
-data/output/model_checkpoints
+# Batch output
+data/output/model_runs
 
 # Compiled python code
 ~.pyc

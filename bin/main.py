@@ -53,9 +53,9 @@ def extract():
         numpy.random.seed(0)
         random.seed(0)
         logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
-        train_observations = train_observations.sample(1000)
+        train_observations = train_observations.sample(200)
         train_observations = train_observations.reset_index()
-        test_observations = test_observations.sample(1000)
+        test_observations = test_observations.sample(200)
         test_observations = test_observations.reset_index()
 
     lib.archive_dataset_schemas('extract', locals(), globals())
@@ -118,7 +118,7 @@ def train(train_observations):
     tf_log_path = os.path.join(os.path.expanduser('~/log_dir'), lib.get_batch_name())
     logging.info('Using Tensorboard path: {}'.format(tf_log_path))
 
-    mc_log_path = os.path.join(lib.get_conf('model_checkpoint_path'),
+    mc_log_path = os.path.join(lib.get_model_checkpoint_path(),
                                lib.get_batch_name() + '_epoch_{epoch:03d}_val_loss_{val_loss:.2f}.h5py')
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
@@ -163,13 +163,13 @@ def load(train_observations, cat_model, test_observations):
     if not lib.get_conf('create_histograms'):
         # Save train observations, if object heavy histogram data set wasn't generated
         logging.info('Saving train observations')
-        train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
-        train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
+        train_observations.to_feather(os.path.join(lib.get_batch_output_folder(), 'train_observations.feather'))
+        train_observations.to_csv(os.path.join(lib.get_batch_output_folder(), 'train_observations.csv'), index=False)
 
         # Save test observations, if object heavy histogram data set wasn't generated
         logging.info('Saving test observations')
-        test_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'test_observations.feather'))
-        test_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'test_observations.csv'), index=False)
+        test_observations.to_feather(os.path.join(lib.get_batch_output_folder(), 'test_observations.feather'))
+        test_observations.to_csv(os.path.join(lib.get_batch_output_folder(), 'test_observations.csv'), index=False)
 
     # Save submission
     logging.info('Saving submission')
@@ -179,11 +179,11 @@ def load(train_observations, cat_model, test_observations):
     submissions = submissions[submission_columns]
     logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
     submissions.to_csv(
-        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
+        path_or_buf=os.path.join(lib.get_batch_output_folder(), 'final_epoch_submission.csv'),
         index=False)
 
     # Save final model
-    cat_model.save(os.path.join(lib.get_conf('model_output_path'), 'final_model.h5py'))
+    cat_model.save(os.path.join(lib.get_batch_output_folder(), 'final_model.h5py'))
 
     lib.archive_dataset_schemas('load', locals(), globals())
     logging.info('End load')

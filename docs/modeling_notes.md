@@ -169,6 +169,10 @@ TODONE
 
  - Create model conf parameter
  - Create model singleton
+ - Modify load to create and fill a batch file
+   - Include model type in batch name
+   - ISO 8601 formatted time for batchname
+   - Model run summary
  
 
 

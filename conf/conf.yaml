@@ -1,6 +1,6 @@
 batch_prefix: b
 num_epochs: 1
-x_maxlen: 1000
+x_maxlen: 800
 data_schema_dir: ../data/schemas
 test_run: True
 train_path: ../data/input/train.csv
@@ -9,8 +9,5 @@ sample_submission_path: ../data/input/sample_submission.csv
 create_histograms: False
 histogram_path: ../data/output/histograms
 model_choice: serialized # Name of a method in models.py, or use `serialized` to use the model at serialized_model_path
-serialized_model_choice_path: ../data/output/models/final_model.h5py
-model_checkpoint_path: ../data/output/model_checkpoints
-load_path: ../data/output/enriched_datasets
-model_output_path: ../data/output/models
-submission_path: ../data/output/submissions
+serialized_model_choice_path: ../data/output/submissions/12_epoch/model_checkpoints/bilstm_2018-02-04_18_02_49.929200_epoch_008_val_loss_0.33.h5py
+load_path: ../data/output/model_runs
