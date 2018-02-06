@@ -126,7 +126,7 @@ Refactor. A few goals:
  
 Better models. A few ideas:
 
- - Convolutional layer (reduce train time)
+ - Convolution layer (reduce train time)
  - Vary learning rate
  - Vary embedding size 
  - Dense layer after bi-lstm
@@ -178,8 +178,20 @@ TODONE
  - Add flag for train
  - Add flag for inference
  - Clean up confs file / Add comments
-
-
-
  
+### Model
+
+ - Adding conv layer
+ - Adding conv layer w/ stride
+ - Adding Dense layer at end w/ linear
+ - Adding Dense layer at end w/ relu
  
+### TODO
+
+ - Add \r and \n back into set of legal characters
+ - README
+ - AUC Metric
+ - Model run summary file
+ - Docstrings
+ - Try smaller embedding size
+ - Try different learning rate
