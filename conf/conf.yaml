@@ -5,6 +5,8 @@ data_schema_dir: ../data/schemas
 test_run: True
 train_path: ../data/input/train.csv
 test_path: ../data/input/test.csv
+run_train: True
+run_infer: False
 sample_submission_path: ../data/input/sample_submission.csv
 create_histograms: False
 histogram_path: ../data/output/histograms

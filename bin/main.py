@@ -17,7 +17,6 @@ import pandas
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import lib
-import models
 
 
 def main():
@@ -27,18 +26,25 @@ def main():
     :rtype: None
     """
     logging.basicConfig(level=logging.INFO)
+    logging.info('Begin model run: {}'.format(lib.get_batch_name()))
+    print('Begin model run: {}'.format(lib.get_batch_name()))
 
     # Load all resources and data from file
+
     train_observations, test_observations = extract()
 
     # Train a model
-    train_observations, cat_model = train(train_observations)
+    if lib.get_conf('run_train'):
+        train_observations, cat_model = train(train_observations)
 
     # Use model for inference
-    test_observations = infer(test_observations)
+    if lib.get_conf('run_infer'):
+        test_observations = infer(test_observations)
 
     # Load all results to file
-    load(train_observations, cat_model, test_observations)
+    load(train_observations, test_observations)
+    logging.info('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(), lib.get_batch_output_folder()))
+    print('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(), lib.get_batch_output_folder()))
     pass
 
 
@@ -157,8 +163,9 @@ def infer(test_observations):
     return test_observations
 
 
-def load(train_observations, cat_model, test_observations):
+def load(train_observations, test_observations):
     logging.info('Begin load')
+    cat_model = lib.get_model()
 
     if not lib.get_conf('create_histograms'):
         # Save train observations, if object heavy histogram data set wasn't generated
@@ -172,15 +179,18 @@ def load(train_observations, cat_model, test_observations):
         test_observations.to_csv(os.path.join(lib.get_batch_output_folder(), 'test_observations.csv'), index=False)
 
     # Save submission
-    logging.info('Saving submission')
-    submission_columns = pandas.read_csv(lib.get_conf('sample_submission_path')).columns
-    submissions = test_observations.copy()
-    submissions.columns = map(lambda x: re.sub(r'_pred', '', x), submissions.columns)
-    submissions = submissions[submission_columns]
-    logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
-    submissions.to_csv(
-        path_or_buf=os.path.join(lib.get_batch_output_folder(), 'final_epoch_submission.csv'),
-        index=False)
+    if lib.get_conf('run_infer') is True:
+        logging.info('Saving submission')
+        submission_columns = pandas.read_csv(lib.get_conf('sample_submission_path')).columns
+        submissions = test_observations.copy()
+        submissions.columns = map(lambda x: re.sub(r'_pred', '', x), submissions.columns)
+        submissions = submissions[submission_columns]
+        logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
+        submissions.to_csv(
+            path_or_buf=os.path.join(lib.get_batch_output_folder(), 'final_epoch_submission.csv'),
+            index=False)
+    else:
+        logging.info('Submission not saved, as infer was not run')
 
     # Save final model
     cat_model.save(os.path.join(lib.get_batch_output_folder(), 'final_model.h5py'))

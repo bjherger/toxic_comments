@@ -161,7 +161,7 @@ TODO
  - Modify load to create and fill a batch file
  - More consistent logging
  - Do something else w/ EDA code
- - Add flag for training model
+ - Add flag for train
  - Add flag for inference
  - Clean up confs file / Add comments
  
@@ -173,6 +173,10 @@ TODONE
    - Include model type in batch name
    - ISO 8601 formatted time for batchname
    - Model run summary
+ - More consistent logging
+ - Do something else w/ EDA code (Will not do)
+ - Add flag for train
+ - Add flag for inference
  
 
 
