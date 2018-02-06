@@ -43,8 +43,11 @@ def main():
 
     # Load all results to file
     load(train_observations, test_observations)
-    logging.info('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(), lib.get_batch_output_folder()))
-    print('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(), lib.get_batch_output_folder()))
+
+    logging.info('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(),
+                                                                         os.path.abspath(lib.get_batch_output_folder())))
+    print('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(),
+                                                                  os.path.abspath(lib.get_batch_output_folder())))
     pass
 
 

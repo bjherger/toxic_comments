@@ -82,7 +82,7 @@ def get_batch_name():
         logging.info('Batch name not yet set. Setting batch name.')
         batch_prefix = get_conf('batch_prefix')
         model_choice = get_conf('model_choice')
-        datetime_str = str(datetime.datetime.utcnow().isoformat())
+        datetime_str = str(datetime.datetime.utcnow().replace(microsecond=0).isoformat())+'Z'
         BATCH_NAME = '_'.join([batch_prefix, model_choice, datetime_str])
         logging.info('Batch name: {}'.format(BATCH_NAME))
     return BATCH_NAME
