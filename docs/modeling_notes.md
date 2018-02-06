@@ -177,7 +177,7 @@ TODONE
  - Do something else w/ EDA code (Will not do)
  - Add flag for train
  - Add flag for inference
- 
+ - Clean up confs file / Add comments
 
 
 
