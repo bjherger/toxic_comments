@@ -8,7 +8,9 @@ test_path: ../data/input/test.csv
 sample_submission_path: ../data/input/sample_submission.csv
 create_histograms: False
 histogram_path: ../data/output/histograms
+model_choice: serialized # Name of a method in models.py, or use `serialized` to use the model at serialized_model_path
+serialized_model_choice_path: ../data/output/models/final_model.h5py
 model_checkpoint_path: ../data/output/model_checkpoints
 load_path: ../data/output/enriched_datasets
-model_path: ../data/output/models
+model_output_path: ../data/output/models
 submission_path: ../data/output/submissions

@@ -119,7 +119,8 @@ def train(train_observations):
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
                  ModelCheckpoint(mc_log_path)]
-    cat_model = models.bi_lstm_embedding(train_X, train_ys)
+
+    cat_model = lib.get_model(train_X, train_ys)
 
     cat_model.fit(train_X, train_ys, validation_split=.2, epochs=lib.get_conf('num_epochs'), callbacks=callbacks)
 
@@ -177,7 +178,7 @@ def load(train_observations, cat_model, test_observations):
         index=False)
 
     # Save final model
-    cat_model.save(os.path.join(lib.get_conf('model_path'), 'model.h5py'))
+    cat_model.save(os.path.join(lib.get_conf('model_output_path'), 'final_model.h5py'))
 
     lib.archive_dataset_schemas('load', locals(), globals())
     logging.info('End load')

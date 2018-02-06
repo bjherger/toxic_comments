@@ -23,7 +23,7 @@ def baseline_model(X, y):
     return regression_model
 
 
-def bi_lstm_embedding(X, y):
+def bi_lstm(X, y):
     # Create Input layer
     # Input: Input length
     if len(X.shape) >= 2:

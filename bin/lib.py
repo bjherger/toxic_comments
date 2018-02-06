@@ -3,21 +3,26 @@ import logging
 import os
 import re
 import string
-import tempfile
 
 import matplotlib.pyplot as plt
 import numpy
 import pandas
 import yaml
-# Global variables
-from keras.preprocessing.sequence import pad_sequences
+from keras import Model
 
+from keras.preprocessing.sequence import pad_sequences
+import keras
+
+import models
+
+# Global variables
 CONFS = None
 BATCH_NAME = None
 TEMP_DIR = None
 CHAR_INDICES = None
 INDICES_CHAR = None
 LEGAL_CHARS = None
+CURRENT_BATCH_MODEL = None
 
 
 def load_confs(confs_path='../conf/conf.yaml'):
@@ -80,13 +85,30 @@ def get_batch_name():
     return BATCH_NAME
 
 
-def get_temp_dir():
-    global TEMP_DIR
-    if TEMP_DIR is None:
-        TEMP_DIR = tempfile.mkdtemp(prefix='reddit_')
-        logging.info('Created temporary directory: {}'.format(TEMP_DIR))
-        print('Created temporary directory: {}'.format(TEMP_DIR))
-    return TEMP_DIR
+def get_model(X, y):
+    global CURRENT_BATCH_MODEL
+
+    if CURRENT_BATCH_MODEL is None:
+        model_choice_string = get_conf('model_choice')
+        logging.info('Attemption to load model w/ description: {}'.format(model_choice_string))
+
+        # Pull serialized model, if requested
+        if model_choice_string == 'serialized':
+            logging.info('Attempting to load serialized model, from path: {}'.format(get_conf('serialized_model_choice_path')))
+            CURRENT_BATCH_MODEL = keras.models.load_model(get_conf('serialized_model_choice_path'))
+
+        # Attempt to pull a model from the models module, if requested
+        elif model_choice_string in models.__dict__:
+            CURRENT_BATCH_MODEL = models.__dict__[model_choice_string](X,y)
+
+            if not isinstance(CURRENT_BATCH_MODEL, Model):
+                raise ValueError('Specified model choice is not a Keras model. ')
+
+        # Raise an error if no model generating
+        else:
+            raise ValueError('Could not find model choice with description: {}'.format(model_choice_string))
+
+    return CURRENT_BATCH_MODEL
 
 
 def archive_dataset_schemas(step_name, local_dict, global_dict):

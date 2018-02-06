@@ -163,6 +163,7 @@ TODO
  - Do something else w/ EDA code
  - Add flag for training model
  - Add flag for inference
+ - Clean up confs file / Add comments
  
 
 
