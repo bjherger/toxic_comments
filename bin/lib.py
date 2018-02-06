@@ -85,7 +85,7 @@ def get_batch_name():
     return BATCH_NAME
 
 
-def get_model(X, y):
+def get_model(X=None, y=None):
     global CURRENT_BATCH_MODEL
 
     if CURRENT_BATCH_MODEL is None:
@@ -99,6 +99,10 @@ def get_model(X, y):
 
         # Attempt to pull a model from the models module, if requested
         elif model_choice_string in models.__dict__:
+            if X is None or y is None:
+                raise ValueError('Configurations request a new model, but X and y not provided. These are necessary'
+                                 'for shape purposes. ')
+
             CURRENT_BATCH_MODEL = models.__dict__[model_choice_string](X,y)
 
             if not isinstance(CURRENT_BATCH_MODEL, Model):

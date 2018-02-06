@@ -8,9 +8,11 @@ Code Template
 import collections
 import logging
 import os
+import random
 import re
 
 import gensim
+import numpy
 import pandas
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
@@ -33,7 +35,7 @@ def main():
     train_observations, cat_model = train(train_observations)
 
     # Use model for inference
-    test_observations = infer(test_observations, cat_model)
+    test_observations = infer(test_observations)
 
     # Load all results to file
     load(train_observations, cat_model, test_observations)
@@ -48,6 +50,8 @@ def extract():
     test_observations = pandas.read_csv(lib.get_conf('test_path'))
 
     if lib.get_conf('test_run'):
+        numpy.random.seed(0)
+        random.seed(0)
         logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
         train_observations = train_observations.sample(1000)
         train_observations = train_observations.reset_index()
@@ -129,8 +133,9 @@ def train(train_observations):
     return train_observations, cat_model
 
 
-def infer(test_observations, cat_model):
+def infer(test_observations):
     logging.info('Begin infer')
+    cat_model = lib.get_model()
     test_observations, test_X, test_ys = transform(test_observations, gen_y=False)
     test_preds = cat_model.predict(test_X)
 

@@ -165,6 +165,11 @@ TODO
  - Add flag for inference
  - Clean up confs file / Add comments
  
+TODONE
+
+ - Create model conf parameter
+ - Create model singleton
+ 
 
 
 
