@@ -1,16 +1,14 @@
 import datetime
 import logging
 import os
+import re
 import string
 import tempfile
 
+import matplotlib.pyplot as plt
 import numpy
 import pandas
-import re
 import yaml
-
-import matplotlib.pyplot as plt
-
 # Global variables
 from keras.preprocessing.sequence import pad_sequences
 
@@ -142,16 +140,16 @@ def archive_dataset_schemas(step_name, local_dict, global_dict):
     # Write to file
     agg_schema_df.to_csv(schema_output_path, index_label='variable')
 
+
 def toxic_vars():
     return ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 
-def var_histogram(df, column):
 
+def var_histogram(df, column):
     x = df[column].values
 
     x = [value for value in x if not numpy.math.isnan(value)]
     histogram(x, column)
-
 
 
 def histogram(x, name):
@@ -159,7 +157,7 @@ def histogram(x, name):
 
     # Clear figure
     plt.clf()
-    n, bins, patches = plt.hist(x, 50, normed=1, facecolor='green', alpha=0.75)
+    plt.hist(x, 50, normed=1, facecolor='green', alpha=0.75)
 
     plt.xlabel(name)
     plt.title(name)
@@ -167,6 +165,7 @@ def histogram(x, name):
     plt.grid(True)
 
     plt.savefig(os.path.join(get_conf('histogram_path'), name))
+
 
 def legal_characters():
     global LEGAL_CHARS
@@ -177,6 +176,7 @@ def legal_characters():
         LEGAL_CHARS = chars
     return LEGAL_CHARS
 
+
 def get_char_indices():
     global CHAR_INDICES
     if CHAR_INDICES is None:
@@ -184,12 +184,14 @@ def get_char_indices():
         CHAR_INDICES = dict((c, i) for i, c in enumerate(chars))
     return CHAR_INDICES
 
+
 def get_indices_char():
     global INDICES_CHAR
     if INDICES_CHAR is None:
         chars = sorted(list(set(legal_characters())))
         INDICES_CHAR = dict((i, c) for i, c in enumerate(chars))
     return INDICES_CHAR
+
 
 def gen_x_y(observations, x_column, gen_y=False):
     logging.info('Generating X and Y')

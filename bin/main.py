@@ -6,13 +6,11 @@ Code Template
 
 """
 import collections
-import itertools
 import logging
 import os
 import re
 
 import gensim
-import numpy
 import pandas
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
@@ -80,7 +78,8 @@ def transform(observations, gen_y):
         # Agg: Breakdown by toxic type
         for toxic_type in lib.toxic_vars():
             logging.info('{}: {} of {} posts ({}%) are toxic type: {}'.format(
-                toxic_type, sum(observations[toxic_type]), len(observations.index), sum(observations[toxic_type]) / float(len(observations.index)), toxic_type))
+                toxic_type, sum(observations[toxic_type]), len(observations.index),
+                sum(observations[toxic_type]) / float(len(observations.index)), toxic_type))
 
         # Agg: Vocab size
         all_tokens = [item for sublist in observations['tokens'] for item in sublist]
@@ -91,7 +90,7 @@ def transform(observations, gen_y):
         token_counts = filter(lambda x: x > 1000, token_counts)
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
-    # TODO Replace mockup X with actual values
+    # Generate X and y values
     X, ys = lib.gen_x_y(observations, 'comment_text', gen_y)
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
@@ -130,7 +129,7 @@ def infer(test_observations, cat_model):
     # Each probability is wrapped in its own array. This produces a flat array of probabilities
     test_preds = map(lambda x: x[:, 0], test_preds)
 
-    column_names = map(lambda x: x+'_pred', lib.toxic_vars())
+    column_names = map(lambda x: x + '_pred', lib.toxic_vars())
     preds_df = pandas.DataFrame(index=range(len(test_preds[0])))
     for index, column_name in enumerate(column_names):
         preds_df[column_name] = test_preds[index]
@@ -144,9 +143,9 @@ def infer(test_observations, cat_model):
     logging.info('End infer')
     return test_observations
 
+
 def load(train_observations, cat_model, test_observations):
     logging.info('Begin load')
-
 
     if not lib.get_conf('create_histograms'):
         # Save train observations, if object heavy histogram data set wasn't generated
