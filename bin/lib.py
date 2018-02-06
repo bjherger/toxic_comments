@@ -218,8 +218,8 @@ def legal_characters():
     global LEGAL_CHARS
     if LEGAL_CHARS is None:
         chars = set(string.printable + '<>')
-        # chars.remove('\n')
-        # chars.remove('\r')
+        chars.remove('\n')
+        chars.remove('\r')
         LEGAL_CHARS = chars
     return LEGAL_CHARS
 
