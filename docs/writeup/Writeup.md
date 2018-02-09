@@ -4,6 +4,14 @@
 
 ## Background
 
+The internet is a bright place, made dark by a vocal minority of trolls. To help with this issue, a recent 
+Kaggle competition has provided a large number of internet comments, and labels with whether they are toxic. The 
+ultimate goal of building a model that can detect (and possibly sensor) these toxic comments. 
+
+While I hope to be an altruistic person, I'm actually more interested in using the free, large, and hand-labeled text 
+data set to compare LSTM powered architectures and heuristics. So, I guess I get to hunt trolls while benchmarking 
+architectures.  
+
 ## Data
 
 Google's [ConversationAI](https://conversationai.github.io/) team sponsored the project, and provided 561,808 text 
@@ -21,7 +29,7 @@ comments. For each of these comments, they have provided binary labels for 7 typ
 | insult        | bool  |
 | identity_hate | bool  |
 
-*Schema for input data set, provided by Kaggle* 
+*Schema for input data set, provided by Kaggle and labeled by humans* 
 
 Additionally, there are two highly unique attributes for this data set:
 
@@ -33,7 +41,7 @@ Additionally, there are two highly unique attributes for this data set:
  labels. This provides a few unique challenges, particularly in choosing a loss function, metrics, and model 
  architectures.
  
-Once I had the data set in hand, I performed some cursory ETA to get an idea of post length, label distribution, and 
+Once I had the data set in hand, I performed some cursory EDA to get an idea of post length, label distribution, and 
 vocabulary size (see below). 
 
 ![num_chars](references/num_chars.png)
@@ -44,11 +52,13 @@ vocabulary size (see below).
 
 ### Data Transformations
 
-Finally, I was able to start ETL'ing the data set. Given the diverse and non-standard vocabulary used in many posts 
-(and in particular toxic posts), I chose to build a character level model instead of a token (word) level model. 
+After EDA, I was able to start ETL'ing the data set. Given the diverse and non-standard vocabulary used in many posts 
+(particularly in toxic posts), I chose to build a character (letter) level model instead of a token (word) level model. 
+This character level model looks at every letter in the text one at a time, whereas a token level model would look at 
+individual words, one at a time  
 
-I stole the ETL process from my [spoilers model](https://github.com/bjherger/spoilers_model), and performed the following transformations to create the X matrix:
-
+I stole the ETL process from my [spoilers model](https://github.com/bjherger/spoilers_model), and performed the 
+following transformations to create the X matrix:
  
  - All characters were converted to lower case
  - All character that were not in a pre-approved set were replaced with a space
@@ -58,14 +68,14 @@ I stole the ETL process from my [spoilers model](https://github.com/bjherger/spo
  - Strings were converted from an array of characters to an array of indices
  - The y arrays, containing booleans, required no modification
 
-As an example, the comment `What are you stalking my edits or something?` would be come: 
-`['<', 'w', 'h', 'a', 't', ' ', 'a', 'r', 'e', ' ', 'y', 'o', 'u', ' ', 's', 't', 'a', 'l', 'k', 'i', 'n', 'g', ' ', 
+As an example, the comment `What, are you stalking my edits or something?` would be come: 
+`['<', 'w', 'h', 'a', 't', ',', ' ', 'a', 'r', 'e', ' ', 'y', 'o', 'u', ' ', 's', 't', 'a', 'l', 'k', 'i', 'n', 'g', ' ', 
 'm', 'e', ' ', 'o', 'r', ' ', 's', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g', '?', '>']` (I've omitted the padding, as 
 I'm not paid by the character. Actually, I don't get paid for this at all. )
  
 ## Modeling
 
-While designing, and implementing models, there were a variety of decisions to make, stemming from the data set's 
+While designing, and implementing models, there were a variety of decisions to make, moslty stemming from the data set's 
 overlapping labels and class imbalance. 
 
 First and foremost, the overlapping labels provided for a few different modeling approaches:
@@ -97,8 +107,8 @@ To overcome this issue, the Area under the ROC Curve (AUC) metric is commonly us
 your model correctly separates the two classes, by varying the probability threshold used in classification. SKLearn 
 has a pretty strong [discussion](http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html) of AUC.
 
-Unfortunately AUC can't be used as a loss (though TF has a [good proxy](http://tflearn.org/objectives/#roc-auc-score)), 
-so I proceeded with a binary cross-entropy loss.      
+Unfortunately AUC can't be used as a loss because it is non diffentiable (though TF has a 
+[good proxy](http://tflearn.org/objectives/#roc-auc-score)), so I proceeded with a binary cross-entropy loss.      
 
 ## Conclusion
 
