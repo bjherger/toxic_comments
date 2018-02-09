@@ -264,6 +264,7 @@ def gen_character_model_x_y(observations, x_column, gen_y=False):
         text = re.sub('>', ' ', text)
         text = '<' + text + '>'
 
+
         logging.debug('Cleaned text: {}'.format(text))
         cleaned_text_chars.append(text)
 

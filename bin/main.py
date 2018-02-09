@@ -25,7 +25,7 @@ def main():
     :return: None
     :rtype: None
     """
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     logging.info('Begin model run: {}'.format(lib.get_batch_name()))
     print('Begin model run: {}'.format(lib.get_batch_name()))
 

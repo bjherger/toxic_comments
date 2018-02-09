@@ -215,3 +215,18 @@ Filter parameter
  - Change seems to be in convolution kernel
  - Found a [so](https://datascience.stackexchange.com/questions/16463/what-is-are-the-default-filters-used-by-keras-convolution2d)
  - Basically a different set of learned weights. filters=1 would just be one learned set of weights
+ 
+### Writeup
+
+Writing outline
+
+### LSTM
+
+ - Trying CuDNNLSTM
+ - Too much work. Will do later
+ 
+### TODO
+
+ - CuDNNLSTM
+ - Confirm Ys are boolean
+ - Confirm X datatype

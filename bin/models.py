@@ -103,8 +103,8 @@ def bi_conv_lstm_relu(X, y):
     x = Conv1D(filters=3,
                kernel_size=3,
                strides=1)(x)
-    x = Bidirectional(LSTM(64))(x)
-    x = Dense(128, activation='relu')(x)
+    x = Bidirectional(LSTM(128))(x)
+    x = Dense(512, activation='relu')(x)
 
     # Create model output layers
     output_layers = list()
@@ -153,8 +153,8 @@ def bi_conv_lstm_linear(X, y):
     x = Conv1D(filters=3,
                kernel_size=3,
                strides=1)(x)
-    x = Bidirectional(LSTM(64))(x)
-    x = Dense(128, activation='linear')(x)
+    x = Bidirectional(LSTM(128))(x)
+    x = Dense(512, activation='linear')(x)
 
     # Create model output layers
     output_layers = list()
@@ -203,8 +203,8 @@ def bi_conv_stride_lstm_linear(X, y):
     x = Conv1D(filters=3,
                kernel_size=3,
                strides=5)(x)
-    x = Bidirectional(LSTM(64))(x)
-    x = Dense(128, activation='linear')(x)
+    x = Bidirectional(LSTM(128))(x)
+    x = Dense(512, activation='linear')(x)
 
     # Create model output layers
     output_layers = list()
