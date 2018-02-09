@@ -100,7 +100,9 @@ def bi_conv_lstm_relu(X, y):
     # Create model input and hidden layers
     x = sequence_input
     x = embedding_layer(x)
-    x = Conv1D(kernel_size=5, strides=3)(x)
+    x = Conv1D(filters=3,
+               kernel_size=3,
+               strides=1)(x)
     x = Bidirectional(LSTM(64))(x)
     x = Dense(128, activation='relu')(x)
 
@@ -148,7 +150,9 @@ def bi_conv_lstm_linear(X, y):
     # Create model input and hidden layers
     x = sequence_input
     x = embedding_layer(x)
-    x = Conv1D(kernel_size=5)(x)
+    x = Conv1D(filters=3,
+               kernel_size=3,
+               strides=1)(x)
     x = Bidirectional(LSTM(64))(x)
     x = Dense(128, activation='linear')(x)
 
@@ -196,7 +200,9 @@ def bi_conv_stride_lstm_linear(X, y):
     # Create model input and hidden layers
     x = sequence_input
     x = embedding_layer(x)
-    x = Conv1D(kernel_size=5, strides=3)(x)
+    x = Conv1D(filters=3,
+               kernel_size=3,
+               strides=5)(x)
     x = Bidirectional(LSTM(64))(x)
     x = Dense(128, activation='linear')(x)
 

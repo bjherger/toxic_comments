@@ -195,3 +195,23 @@ TODONE
  - Docstrings
  - Try smaller embedding size
  - Try different learning rate
+ 
+## 2018-02-09
+
+### Backlog
+
+TODO
+
+ - Update models to conv layers compile
+ - Outline writeup
+ 
+### Conv layers
+
+Filter parameter
+
+ - Search results aren't helpful
+ - Looking through sourcecode to see where param is used
+ - Changed parameter, but don't see a change in output tensors on tensorboard
+ - Change seems to be in convolution kernel
+ - Found a [so](https://datascience.stackexchange.com/questions/16463/what-is-are-the-default-filters-used-by-keras-convolution2d)
+ - Basically a different set of learned weights. filters=1 would just be one learned set of weights
