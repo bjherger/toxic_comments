@@ -230,3 +230,12 @@ Writing outline
  - CuDNNLSTM
  - Confirm Ys are boolean
  - Confirm X datatype
+
+## 2018-02-13
+
+### Backlog
+
+ - Second pass at writeup
+ - README
+ - Highlight best model
+ - Actual model metrics (?) 

@@ -1,16 +1,17 @@
 # Troll hunting: Detecting toxic internet comments with multi-task Deep Learning
 
-**tl;dr:** TODO
+**tl;dr:** Surfacing toxic Wikipedia comments, by training an NLP deep learning model utilizing multi-task learning a 
+variety of deep learning architectures.  
 
 ## Background
 
-The internet is a bright place, made dark by a vocal minority of trolls. To help with this issue, a recent 
-Kaggle competition has provided a large number of internet comments, and labels with whether they are toxic. The 
+The internet is a bright place, made dark by a band of trolls. To help with this issue, a recent 
+Kaggle competition has provided a large number of internet comments, labelled with whether or not they're toxic. The 
 ultimate goal of building a model that can detect (and possibly sensor) these toxic comments. 
 
 While I hope to be an altruistic person, I'm actually more interested in using the free, large, and hand-labeled text 
-data set to compare LSTM powered architectures and heuristics. So, I guess I get to hunt trolls while benchmarking 
-architectures.  
+data set to compare LSTM powered architectures and heuristics. So, I guess I get to hunt trolls while providing a case
+study in text modeling. 
 
 ## Data
 
@@ -34,15 +35,16 @@ comments. For each of these comments, they have provided binary labels for 7 typ
 Additionally, there are two highly unique attributes for this data set:
 
  - **Overlapping labels**: Observations in this data set can belong to multiple classes, and any permutation of 
- these classes. An observation could be described as `toxic`, `toxic and threat` or `no classification`. This is a 
- break from most classifications, which have mutually exclusive response variables (e.g. either `cat` or `dog`, but not 
- both)   
+ these classes. An observation could be described as `{toxic}`, `{toxic, threat}` or `{}`(no classification). This is a 
+ break from most classification problems, which have mutually exclusive response variables (e.g. either `cat` or 
+ `dog`, but not both)   
  - **Class imbalance**: The vast majority of observations are not toxic in any way, and have all `False` 
  labels. This provides a few unique challenges, particularly in choosing a loss function, metrics, and model 
  architectures.
  
 Once I had the data set in hand, I performed some cursory EDA to get an idea of post length, label distribution, and 
-vocabulary size (see below). 
+vocabulary size (see below). This analysis helped to inform whether I should use a character level model or a word level 
+model, pre-trianed embeddings, and the length for padded inputs. 
 
 ![num_chars](references/num_chars.png)
 *Histogram of number of characters in each observation*
@@ -55,7 +57,7 @@ vocabulary size (see below).
 After EDA, I was able to start ETL'ing the data set. Given the diverse and non-standard vocabulary used in many posts 
 (particularly in toxic posts), I chose to build a character (letter) level model instead of a token (word) level model. 
 This character level model looks at every letter in the text one at a time, whereas a token level model would look at 
-individual words, one at a time  
+individual words, one at a time.
 
 I stole the ETL process from my [spoilers model](https://github.com/bjherger/spoilers_model), and performed the 
 following transformations to create the X matrix:
@@ -72,10 +74,12 @@ As an example, the comment `What, are you stalking my edits or something?` would
 `['<', 'w', 'h', 'a', 't', ',', ' ', 'a', 'r', 'e', ' ', 'y', 'o', 'u', ' ', 's', 't', 'a', 'l', 'k', 'i', 'n', 'g', ' ', 
 'm', 'e', ' ', 'o', 'r', ' ', 's', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g', '?', '>']` (I've omitted the padding, as 
 I'm not paid by the character. Actually, I don't get paid for this at all. )
+
+The y arrays did not require significant processing. 
  
 ## Modeling
 
-While designing, and implementing models, there were a variety of decisions to make, moslty stemming from the data set's 
+While designing and implementing models, there were a variety of decisions to make, mostly stemming from the data set's 
 overlapping labels and class imbalance. 
 
 First and foremost, the overlapping labels provided for a few different modeling approaches:
@@ -103,11 +107,11 @@ evaluation metric for this competition was actually changed mid-competition from
 here is that choosing the most common label (also known as the ZeroR model) actually provides a high accuracy. For 
 example, if 99% of observations had `False` labels, always responding `False` would result in a 99% accuracy. 
 
-To overcome this issue, the Area under the ROC Curve (AUC) metric is commonly used. This metric measures how well 
+To overcome this issue, the Area Under the ROC Curve (AUC) metric is commonly used. This metric measures how well 
 your model correctly separates the two classes, by varying the probability threshold used in classification. SKLearn 
 has a pretty strong [discussion](http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html) of AUC.
 
-Unfortunately AUC can't be used as a loss because it is non diffentiable (though TF has a 
+Unfortunately AUC can't be used as a loss because it is non differentiable (though TF has a 
 [good proxy](http://tflearn.org/objectives/#roc-auc-score)), so I proceeded with a binary cross-entropy loss.      
 
 ## Conclusion
@@ -135,5 +139,6 @@ hand-labelled data set. These are, in no particular order:
  
 ## Resources
 
-TODO GH  
+ - [Repo](https://github.com/bjherger/toxic_comments)
+ - [Kaggle competition](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge)
 
