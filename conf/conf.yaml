@@ -1,11 +1,22 @@
+# Batch related confs
+batch_prefix: b
+run_train: True
+run_infer: True
 data_schema_dir: ../data/schemas
-test_run: False
+
+# Input data and transform related confs
+test_run: True
 train_path: ../data/input/train.csv
 test_path: ../data/input/test.csv
-sample_submission_path: ../data/input/sample_submission.csv
+x_maxlen: 800
 create_histograms: False
 histogram_path: ../data/output/histograms
-model_checkpoint_path: ../data/output/model_checkpoints
-load_path: ../data/output/enriched_datasets
-model_path: ../data/output/models
-submission_path: ../data/output/submissions
+
+# Model related confs
+model_choice: bi_conv_lstm_relu # Name of a method in models.py, or use `serialized` to use the model at serialized_model_path
+serialized_model_choice_path: ../data/output/submissions/12_epoch/model_checkpoints/bilstm_2018-02-04_18_02_49.929200_epoch_008_val_loss_0.33.h5py
+num_epochs: 1
+
+# Load related paths
+sample_submission_path: ../data/input/sample_submission.csv
+load_path: ../data/output/model_runs

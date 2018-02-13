@@ -7,18 +7,16 @@ Code Template
 """
 import collections
 import logging
+import os
+import random
+import re
 
 import gensim
-import os
-import itertools
-
 import numpy
 import pandas
-import re
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import lib
-import models
 
 
 def main():
@@ -28,11 +26,28 @@ def main():
     :rtype: None
     """
     logging.basicConfig(level=logging.DEBUG)
+    logging.info('Begin model run: {}'.format(lib.get_batch_name()))
+    print('Begin model run: {}'.format(lib.get_batch_name()))
+
+    # Load all resources and data from file
 
     train_observations, test_observations = extract()
-    train_observations, cat_model = train(train_observations)
-    test_observations = infer(test_observations, cat_model)
-    load(train_observations, cat_model, test_observations)
+
+    # Train a model
+    if lib.get_conf('run_train'):
+        train_observations, cat_model = train(train_observations)
+
+    # Use model for inference
+    if lib.get_conf('run_infer'):
+        test_observations = infer(test_observations)
+
+    # Load all results to file
+    load(train_observations, test_observations)
+
+    logging.info('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(),
+                                                                         os.path.abspath(lib.get_batch_output_folder())))
+    print('End model run: {}. Results can be found at: {}'.format(lib.get_batch_name(),
+                                                                  os.path.abspath(lib.get_batch_output_folder())))
     pass
 
 
@@ -44,10 +59,12 @@ def extract():
     test_observations = pandas.read_csv(lib.get_conf('test_path'))
 
     if lib.get_conf('test_run'):
+        numpy.random.seed(0)
+        random.seed(0)
         logging.warning('Performing test run. Subsetting to 1000 samples each of train and test')
-        train_observations = train_observations.sample(1000)
+        train_observations = train_observations.sample(200)
         train_observations = train_observations.reset_index()
-        test_observations = test_observations.sample(1000)
+        test_observations = test_observations.sample(200)
         test_observations = test_observations.reset_index()
 
     lib.archive_dataset_schemas('extract', locals(), globals())
@@ -81,7 +98,8 @@ def transform(observations, gen_y):
         # Agg: Breakdown by toxic type
         for toxic_type in lib.toxic_vars():
             logging.info('{}: {} of {} posts ({}%) are toxic type: {}'.format(
-                toxic_type, sum(observations[toxic_type]), len(observations.index), sum(observations[toxic_type]) / float(len(observations.index)), toxic_type))
+                toxic_type, sum(observations[toxic_type]), len(observations.index),
+                sum(observations[toxic_type]) / float(len(observations.index)), toxic_type))
 
         # Agg: Vocab size
         all_tokens = [item for sublist in observations['tokens'] for item in sublist]
@@ -92,19 +110,8 @@ def transform(observations, gen_y):
         token_counts = filter(lambda x: x > 1000, token_counts)
         lib.histogram(token_counts, 'token_counts, count > 1000')
 
-    # TODO Replace mockup X with actual values
-    X = numpy.zeros(shape=(len(observations.index), 3))
-    if gen_y:
-        ys = list()
-        for toxic_var in lib.toxic_vars():
-            local_y = observations[toxic_var].values
-            ys.append(local_y)
-        logging.info('Created X with shape: {} and Y_0 with shape: {}'.format(X.shape, ys[0].shape))
-    else:
-        ys = None
-        logging.info('Created X with shape: {} and None Y'.format(X.shape))
-
-
+    # Generate X and y values
+    X, ys = lib.gen_character_model_x_y(observations, 'comment_text', gen_y)
 
     lib.archive_dataset_schemas('transform_y_{}'.format(gen_y), locals(), globals())
     logging.info('End transform')
@@ -120,29 +127,31 @@ def train(train_observations):
     tf_log_path = os.path.join(os.path.expanduser('~/log_dir'), lib.get_batch_name())
     logging.info('Using Tensorboard path: {}'.format(tf_log_path))
 
-    mc_log_path = os.path.join(lib.get_conf('model_checkpoint_path'),
+    mc_log_path = os.path.join(lib.get_model_checkpoint_path(),
                                lib.get_batch_name() + '_epoch_{epoch:03d}_val_loss_{val_loss:.2f}.h5py')
     logging.info('Using mc_log_path path: {}'.format(mc_log_path))
     callbacks = [TensorBoard(log_dir=tf_log_path),
                  ModelCheckpoint(mc_log_path)]
-    cat_model = models.baseline_model(train_X, train_ys)
 
-    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=2, callbacks=callbacks)
+    cat_model = lib.get_model(train_X, train_ys)
+
+    cat_model.fit(train_X, train_ys, validation_split=.2, epochs=lib.get_conf('num_epochs'), callbacks=callbacks)
 
     lib.archive_dataset_schemas('train', locals(), globals())
     logging.info('End train')
     return train_observations, cat_model
 
 
-def infer(test_observations, cat_model):
+def infer(test_observations):
     logging.info('Begin infer')
+    cat_model = lib.get_model()
     test_observations, test_X, test_ys = transform(test_observations, gen_y=False)
     test_preds = cat_model.predict(test_X)
 
     # Each probability is wrapped in its own array. This produces a flat array of probabilities
     test_preds = map(lambda x: x[:, 0], test_preds)
 
-    column_names = map(lambda x: x+'_pred', lib.toxic_vars())
+    column_names = map(lambda x: x + '_pred', lib.toxic_vars())
     preds_df = pandas.DataFrame(index=range(len(test_preds[0])))
     for index, column_name in enumerate(column_names):
         preds_df[column_name] = test_preds[index]
@@ -156,36 +165,38 @@ def infer(test_observations, cat_model):
     logging.info('End infer')
     return test_observations
 
-def load(train_observations, cat_model, test_observations):
-    logging.info('Begin load')
 
+def load(train_observations, test_observations):
+    logging.info('Begin load')
+    cat_model = lib.get_model()
 
     if not lib.get_conf('create_histograms'):
         # Save train observations, if object heavy histogram data set wasn't generated
         logging.info('Saving train observations')
-        train_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'train_observations.feather'))
-        train_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'train_observations.csv'), index=False)
+        train_observations.to_feather(os.path.join(lib.get_batch_output_folder(), 'train_observations.feather'))
+        train_observations.to_csv(os.path.join(lib.get_batch_output_folder(), 'train_observations.csv'), index=False)
 
         # Save test observations, if object heavy histogram data set wasn't generated
         logging.info('Saving test observations')
-        test_observations.to_feather(os.path.join(lib.get_conf('load_path'), 'test_observations.feather'))
-        test_observations.to_csv(os.path.join(lib.get_conf('load_path'), 'test_observations.csv'), index=False)
+        test_observations.to_feather(os.path.join(lib.get_batch_output_folder(), 'test_observations.feather'))
+        test_observations.to_csv(os.path.join(lib.get_batch_output_folder(), 'test_observations.csv'), index=False)
 
     # Save submission
-    logging.info('Saving submission')
-    submission_columns = pandas.read_csv(lib.get_conf('sample_submission_path')).columns
-    submissions = test_observations.copy()
-    submissions.columns = map(lambda x: re.sub(r'_pred', '', x), submissions.columns)
-    submissions = submissions[submission_columns]
-    logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
-    submissions.to_csv(
-        path_or_buf=os.path.join(lib.get_conf('submission_path'), 'submission.csv'),
-        index=False)
-
-
+    if lib.get_conf('run_infer') is True:
+        logging.info('Saving submission')
+        submission_columns = pandas.read_csv(lib.get_conf('sample_submission_path')).columns
+        submissions = test_observations.copy()
+        submissions.columns = map(lambda x: re.sub(r'_pred', '', x), submissions.columns)
+        submissions = submissions[submission_columns]
+        logging.info('Creating submission w/ columns: {}'.format(submissions.columns))
+        submissions.to_csv(
+            path_or_buf=os.path.join(lib.get_batch_output_folder(), 'final_epoch_submission.csv'),
+            index=False)
+    else:
+        logging.info('Submission not saved, as infer was not run')
 
     # Save final model
-    cat_model.save(os.path.join(lib.get_conf('model_path'), 'model.h5py'))
+    cat_model.save(os.path.join(lib.get_batch_output_folder(), 'final_model.h5py'))
 
     lib.archive_dataset_schemas('load', locals(), globals())
     logging.info('End load')
