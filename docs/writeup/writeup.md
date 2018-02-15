@@ -1,17 +1,17 @@
-# Troll hunting: Detecting toxic internet comments with multi-task Deep Learning
+# Detecting toxic comments with multi-task Deep Learning
 
-**tl;dr:** Surfacing toxic Wikipedia comments, by training an NLP deep learning model utilizing multi-task learning a 
-variety of deep learning architectures.  
+**tl;dr:** Surfacing toxic Wikipedia comments, by training an NLP deep learning model utilizing multi-task learning and 
+evaluating a variety of deep learning architectures.  
 
 ## Background
 
-The internet is a bright place, made dark by a band of trolls. To help with this issue, a recent 
+The internet is a bright place, made dark by internet trolls. To help with this issue, a recent 
 Kaggle competition has provided a large number of internet comments, labelled with whether or not they're toxic. The 
-ultimate goal of building a model that can detect (and possibly sensor) these toxic comments. 
+ultimate goal of this competition is to build a model that can detect (and possibly sensor) these toxic comments. 
 
 While I hope to be an altruistic person, I'm actually more interested in using the free, large, and hand-labeled text 
-data set to compare LSTM powered architectures and heuristics. So, I guess I get to hunt trolls while providing a case
-study in text modeling. 
+data set to compare LSTM powered architectures and deep learning heuristics. So, I guess I get to hunt trolls while 
+providing a casestudy in text modeling. 
 
 ## Data
 
@@ -59,14 +59,15 @@ After EDA, I was able to start ETL'ing the data set. Given the diverse and non-s
 This character level model looks at every letter in the text one at a time, whereas a token level model would look at 
 individual words, one at a time.
 
-I stole the ETL process from my [spoilers model](https://github.com/bjherger/spoilers_model), and performed the 
+I stole the ETL pipeline from my [spoilers model](https://github.com/bjherger/spoilers_model), and performed the 
 following transformations to create the X matrix:
  
  - All characters were converted to lower case
  - All character that were not in a pre-approved set were replaced with a space
  - All adjacent whitespaces were replaced with a single space
  - Start and end markers were added to the string
- - The string was converted to a fixed length pre-padded sequence, with a distinct padding character. Sequences longer than the prescribed length were truncated.
+ - The string was converted to a fixed length pre-padded sequence, with a distinct padding character. Sequences longer 
+ than the prescribed length were truncated.
  - Strings were converted from an array of characters to an array of indices
  - The y arrays, containing booleans, required no modification
 
@@ -79,7 +80,7 @@ The y arrays did not require significant processing.
  
 ## Modeling
 
-While designing and implementing models, there were a variety of decisions to make, mostly stemming from the data set's 
+While designing and implementing models, there were a variety of options, mostly stemming from the data set's 
 overlapping labels and class imbalance. 
 
 First and foremost, the overlapping labels provided for a few different modeling approaches:
@@ -102,8 +103,8 @@ First and foremost, the overlapping labels provided for a few different modeling
 Ultimately, I focused on the one model, multiple output layers approach. However, as discussed in *Future Work*, it 
 would be beneficial to compare and contrast these approaches on a single data set.   
 
-Additionally, class imbalance can cause some issues with choosing the right metric to evaluate. So much so that the 
-evaluation metric for this competition was actually changed mid-competition from cross-entropy to AUC. The core issue 
+Additionally, class imbalance can cause some issues with choosing the right metric to evaluate (so much so that the 
+evaluation metric for this competition was actually changed mid-competition from cross-entropy to AUC). The core issue 
 here is that choosing the most common label (also known as the ZeroR model) actually provides a high accuracy. For 
 example, if 99% of observations had `False` labels, always responding `False` would result in a 99% accuracy. 
 
@@ -112,7 +113,8 @@ your model correctly separates the two classes, by varying the probability thres
 has a pretty strong [discussion](http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html) of AUC.
 
 Unfortunately AUC can't be used as a loss because it is non differentiable (though TF has a 
-[good proxy](http://tflearn.org/objectives/#roc-auc-score)), so I proceeded with a binary cross-entropy loss.      
+[good proxy](http://tflearn.org/objectives/#roc-auc-score), not available in Keras), so I proceeded with a binary 
+cross-entropy loss.      
 
 ## Conclusion
 
