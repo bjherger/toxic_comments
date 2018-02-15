@@ -1,4 +1,4 @@
-# Detecting toxic comments with multi-task Deep Learning
+# [Detecting toxic comments with multi-task Deep Learning](https://www.hergertarian.com/detecting-toxic-comments-with-multitask-deep-learning)
 
 **tl;dr:** Surfacing toxic Wikipedia comments, by training an NLP deep learning model utilizing multi-task learning and 
 evaluating a variety of deep learning architectures.  
@@ -36,7 +36,7 @@ Additionally, there are two highly unique attributes for this data set:
 
  - **Overlapping labels**: Observations in this data set can belong to multiple classes, and any permutation of 
  these classes. An observation could be described as `{toxic}`, `{toxic, threat}` or `{}`(no classification). This is a 
- break from most classification problems, which have mutually exclusive response variables (e.g. either `cat` or 
+ break from most classifi cation problems, which have mutually exclusive response variables (e.g. either `cat` or 
  `dog`, but not both)   
  - **Class imbalance**: The vast majority of observations are not toxic in any way, and have all `False` 
  labels. This provides a few unique challenges, particularly in choosing a loss function, metrics, and model 
@@ -46,10 +46,13 @@ Once I had the data set in hand, I performed some cursory EDA to get an idea of 
 vocabulary size (see below). This analysis helped to inform whether I should use a character level model or a word level 
 model, pre-trianed embeddings, and the length for padded inputs. 
 
-![num_chars](references/num_chars.png)
+![num_chars](/s/num_chars.png)
+
 *Histogram of number of characters in each observation*
 
-![percent_unique_tokens.png](references/percent_unique_tokens.png)
+
+![percent_unique_tokens.png](/s/percent_unique_tokens.png)
+
 *Histogram of number of `set(post_tokens)/len(post_tokens)`, or roughly how many unique words there are in each post*
 
 ### Data Transformations
